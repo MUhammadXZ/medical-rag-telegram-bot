@@ -28,7 +28,7 @@ jobs:
           pip install pytest
 
       - name: Run unit tests
-        run: pytest -m "not integration"
+        run: pytest -q tests/unit tests/test_retrieval.py tests/test_threshold.py tests/test_red_flags.py
 
   integration-faiss:
     runs-on: ubuntu-latest
@@ -50,5 +50,5 @@ jobs:
           if [ -f requirements-dev.txt ]; then pip install -r requirements-dev.txt; fi
           pip install pytest "numpy<2" "faiss-cpu==1.7.4"
 
-      - name: Run FAISS integration tests
-        run: pytest -m integration -q
+      - name: Run FAISS integration test
+        run: pytest -q tests/integration/test_rag_integration.py
