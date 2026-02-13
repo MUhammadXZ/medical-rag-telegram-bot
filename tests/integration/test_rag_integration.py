@@ -32,6 +32,7 @@ class _FakeClient:
         self.embeddings = _DeterministicEmbeddingsAPI(mapping)
 
 
+@pytest.mark.integration
 def test_end_to_end_rag_retrieval_and_threshold_with_real_faiss(tmp_path: Path) -> None:
     faiss = pytest.importorskip("faiss")
 
