@@ -1,0 +1,51 @@
+question_id,question,gold_answer,gold_chunk_ids
+Q001,What is normal adult resting heart rate?,Normal adult resting heart rate is typically 60-100 beats per minute.,C001
+Q002,What blood pressure level is considered hypertensive crisis?,A hypertensive crisis is usually blood pressure at or above 180/120 mmHg.,C002
+Q003,What is first-line treatment for anaphylaxis?,First-line treatment for anaphylaxis is intramuscular epinephrine.,C003
+Q004,What HbA1c threshold supports diagnosis of diabetes?,Diabetes is commonly diagnosed at HbA1c of 6.5% or higher.,C004
+Q005,Which symptom cluster suggests stroke and needs urgent response?,"Sudden facial droop, arm weakness, and speech difficulty suggest stroke and require emergency care.",C005
+Q006,What is the target oxygen saturation for most acutely ill adults?,A typical target oxygen saturation is 94-98% for most acutely ill adults.,C006
+Q007,When is aspirin indicated in suspected acute coronary syndrome?,Aspirin is generally given early in suspected acute coronary syndrome unless contraindicated.,C007
+Q008,What temperature defines fever in adults?,Fever in adults is commonly defined as temperature of 38.0°C or higher.,C008
+Q009,What is the recommended compression-to-ventilation ratio in adult CPR by a lone rescuer?,The adult CPR ratio for a lone rescuer is 30 compressions to 2 breaths.,C009
+Q010,What is sepsis?,Sepsis is life-threatening organ dysfunction caused by a dysregulated response to infection.,C010
+Q011,What urine output level can indicate acute kidney injury concern?,Urine output below 0.5 mL/kg/hour can indicate possible acute kidney injury.,C011
+Q012,What is the antidote for opioid overdose?,Naloxone is the antidote used for opioid overdose.,C012
+Q013,What Glasgow Coma Scale score indicates severe head injury?,A Glasgow Coma Scale score of 8 or less indicates severe head injury.,C013
+Q014,What is first-line therapy for hypoglycemia in a conscious patient?,Give fast-acting oral glucose for hypoglycemia in a conscious patient.,C014
+Q015,What potassium level is severe hyperkalemia risk?,"Severe hyperkalemia concern is often at potassium above about 6.0 mmol/L, especially with ECG changes.",C015
+Q016,What is normal adult respiratory rate?,Normal adult respiratory rate is around 12-20 breaths per minute.,C016
+Q017,When should broad-spectrum antibiotics be started in septic shock?,"Broad-spectrum antibiotics should be started as early as possible, ideally within 1 hour.",C017
+Q018,What is the primary imaging for suspected pulmonary embolism in stable patients?,CT pulmonary angiography is commonly the primary imaging test for suspected pulmonary embolism in stable patients.,C018
+Q019,What defines bradycardia in adults?,Bradycardia in adults is heart rate below 60 beats per minute.,C019
+Q020,What defines tachycardia in adults?,Tachycardia in adults is heart rate above 100 beats per minute.,C020
+Q021,What is the recommended immediate action for tension pneumothorax?,Immediate needle decompression followed by chest drainage is recommended for tension pneumothorax.,C021
+Q022,What blood glucose level is typical threshold for hypoglycemia?,Hypoglycemia is often defined at blood glucose below 70 mg/dL (3.9 mmol/L).,C022
+Q023,What is first-line treatment for status epilepticus initially?,Initial first-line treatment for status epilepticus is a benzodiazepine.,C023
+Q024,What INR target is common for atrial fibrillation anticoagulation with warfarin?,A common warfarin INR target for atrial fibrillation is 2.0-3.0.,C024
+Q025,What indicates possible meningitis requiring urgent evaluation?,"Fever, headache, neck stiffness, and altered mental status can indicate meningitis requiring urgent evaluation.",C025
+Q026,What is the standard duration of dual antiplatelet therapy after many ACS PCI cases?,"Dual antiplatelet therapy is commonly continued for about 12 months after many ACS PCI cases, if bleeding risk allows.",C026
+Q027,What is first-line rate control option in stable atrial fibrillation with rapid ventricular response?,A beta blocker or non-dihydropyridine calcium channel blocker is commonly used for initial rate control in stable AF with RVR.,C027
+Q028,What is severe asthma exacerbation warning sign?,"Inability to complete sentences, marked breathlessness, or low peak flow can indicate severe asthma exacerbation.",C028
+Q029,Which marker is most specific for myocardial injury?,Cardiac troponin is the most specific common marker for myocardial injury.,C029
+Q030,When is thrombolysis considered for ischemic stroke?,Thrombolysis may be considered within a narrow time window from symptom onset after eligibility screening.,C030
+Q031,What fluid is first choice for initial septic shock resuscitation?,Isotonic crystalloids are first-choice fluids for initial septic shock resuscitation.,C031
+Q032,What is target mean arterial pressure in septic shock initial management?,An initial target mean arterial pressure of around 65 mmHg is commonly used in septic shock.,C032
+Q033,What finding suggests diabetic ketoacidosis?,Hyperglycemia with high anion gap metabolic acidosis and ketonemia suggests diabetic ketoacidosis.,C033
+Q034,What is first-line analgesic approach for mild pain without contraindications?,Acetaminophen/paracetamol is a common first-line analgesic for mild pain when appropriate.,C034
+Q035,What is hallmark ECG finding in STEMI?,ST-segment elevation in contiguous leads is a hallmark ECG finding in STEMI.,C035
+Q036,What is immediate management priority in upper airway obstruction?,Immediate priority is airway protection and restoration of oxygenation/ventilation.,C036
+Q037,What is preferred vasopressor in septic shock if hypotension persists after fluids?,Norepinephrine is generally the preferred first-line vasopressor in septic shock.,C037
+Q038,What defines acute respiratory failure concerning oxygenation?,Acute respiratory failure is concern when oxygenation or ventilation is insufficient to meet physiologic needs.,C038
+Q039,What is common contraindication to thrombolysis?,Active internal bleeding is a major contraindication to thrombolysis.,C039
+Q040,What key advice is given after prescribing antibiotics?,Advise adherence to prescribed dosing and to seek care if symptoms worsen or adverse effects occur.,C040
+Q041,What is normal serum sodium range in adults?,Normal adult serum sodium is typically about 135-145 mmol/L.,C041
+Q042,What symptom suggests possible deep vein thrombosis?,Unilateral leg swelling with pain and tenderness suggests possible deep vein thrombosis.,C042
+Q043,What is first action when severe transfusion reaction suspected?,"Stop the transfusion immediately and assess airway, breathing, circulation.",C043
+Q044,What is primary prevention advice for type 2 diabetes risk reduction?,"Weight management, healthy diet, and regular physical activity are core prevention strategies for type 2 diabetes.",C044
+Q045,What is red-flag feature in headache requiring urgent imaging or evaluation?,Sudden thunderclap headache is a red flag requiring urgent evaluation.,C045
+Q046,What does a low Wells score generally imply for PE probability?,A low Wells score suggests lower pretest probability of pulmonary embolism.,C046
+Q047,What electrolyte abnormality is classically linked to peaked T waves?,Hyperkalemia is classically associated with peaked T waves.,C047
+Q048,What is central principle of antibiotic stewardship?,Use the narrowest effective antibiotic for the shortest effective duration based on likely or confirmed pathogen.,C048
+Q049,What is first-line treatment for croup in children with significant symptoms?,"Corticosteroids are first-line treatment for croup, with nebulized epinephrine for more severe distress.",C049
+Q050,What should a medical chatbot do when evidence is insufficient in retrieved context?,The chatbot should refuse or provide an insufficiency statement rather than guessing.,C050
