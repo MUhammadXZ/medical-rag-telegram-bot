@@ -147,3 +147,54 @@ def test_load_faiss_index_reads_index_and_metadata(tmp_path: Path, monkeypatch) 
     assert loaded_index["dim"] == "2"
     assert loaded_index["count"] == "2"
     assert len(loaded_metadata["records"]) == 2
+
+
+def test_embed_texts_uses_local_model_prefix(monkeypatch) -> None:
+    class _RecordingEmbeddingsAPI:
+        def __init__(self) -> None:
+            self.models: list[str] = []
+
+        def create(self, model: str, input: list[str]) -> _FakeEmbeddingResponse:
+            self.models.append(model)
+            return _FakeEmbeddingResponse([_FakeEmbeddingItem([1.0, 0.0]) for _ in input])
+
+    class _RecordingClient:
+        def __init__(self) -> None:
+            self.embeddings = _RecordingEmbeddingsAPI()
+
+    client = _RecordingClient()
+    monkeypatch.setattr("app.data.ingestion.pipeline.SentenceTransformerEmbeddingClient", lambda: client)
+
+    from app.data.ingestion.pipeline import _embed_texts
+
+    vectors = _embed_texts(["hello"], model="local:BAAI/bge-small-en-v1.5", embedding_client=None)
+
+    assert len(vectors) == 1
+    assert client.embeddings.models == ["BAAI/bge-small-en-v1.5"]
+
+
+def test_embed_texts_falls_back_to_local_without_openai_key(monkeypatch) -> None:
+    class _RecordingEmbeddingsAPI:
+        def __init__(self) -> None:
+            self.models: list[str] = []
+
+        def create(self, model: str, input: list[str]) -> _FakeEmbeddingResponse:
+            self.models.append(model)
+            return _FakeEmbeddingResponse([_FakeEmbeddingItem([1.0, 0.0]) for _ in input])
+
+    class _RecordingClient:
+        def __init__(self) -> None:
+            self.embeddings = _RecordingEmbeddingsAPI()
+
+    client = _RecordingClient()
+    monkeypatch.delenv("OPENAI_API_KEY", raising=False)
+    monkeypatch.setattr("app.data.ingestion.pipeline.OpenAI", None)
+    monkeypatch.setattr("app.data.ingestion.pipeline.sentence_transformers_available", lambda: True)
+    monkeypatch.setattr("app.data.ingestion.pipeline.SentenceTransformerEmbeddingClient", lambda: client)
+
+    from app.data.ingestion.pipeline import DEFAULT_LOCAL_EMBEDDING_MODEL, _embed_texts
+
+    vectors = _embed_texts(["hello"], model="text-embedding-3-small", embedding_client=None)
+
+    assert len(vectors) == 1
+    assert client.embeddings.models == [DEFAULT_LOCAL_EMBEDDING_MODEL]

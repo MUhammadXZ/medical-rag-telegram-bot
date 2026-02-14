@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import logging
+import os
 import time
 from pathlib import Path
 
@@ -13,10 +14,13 @@ except ImportError:  # pragma: no cover - dependency wiring is environment-speci
 from .chunker import build_chunks
 from .loaders import load_guideline_documents
 from .models import IngestionConfig
+from .local_embeddings import SentenceTransformerEmbeddingClient, sentence_transformers_available
 from .text_processing import clean_text
 
 
 logger = logging.getLogger(__name__)
+
+DEFAULT_LOCAL_EMBEDDING_MODEL = "sentence-transformers/all-MiniLM-L6-v2"
 
 
 def _get_faiss_module():
@@ -27,6 +31,26 @@ def _get_faiss_module():
     return faiss
 
 
+def _build_default_embedding_client(model: str) -> tuple[object, str]:
+    if model.startswith("local:"):
+        local_model = model.split(":", maxsplit=1)[1] or DEFAULT_LOCAL_EMBEDDING_MODEL
+        return SentenceTransformerEmbeddingClient(), local_model
+
+    if OpenAI is not None and os.getenv("OPENAI_API_KEY"):
+        return OpenAI(), model
+
+    if sentence_transformers_available():
+        logger.warning(
+            "OPENAI_API_KEY not set or openai unavailable; falling back to local embeddings model %s.",
+            DEFAULT_LOCAL_EMBEDDING_MODEL,
+        )
+        return SentenceTransformerEmbeddingClient(), DEFAULT_LOCAL_EMBEDDING_MODEL
+
+    raise RuntimeError(
+        "No embedding backend is available. Set OPENAI_API_KEY for OpenAI embeddings or install sentence-transformers for local embeddings."
+    )
+
+
 def _embed_texts(
     texts: list[str],
     model: str,
@@ -34,9 +58,7 @@ def _embed_texts(
     batch_size: int = 128,
 ) -> object:
     if embedding_client is None:
-        if OpenAI is None:
-            raise RuntimeError("openai package is required for embedding generation.")
-        embedding_client = OpenAI()
+        embedding_client, model = _build_default_embedding_client(model)
 
     vectors: list[list[float]] = []
     for i in range(0, len(texts), batch_size):
