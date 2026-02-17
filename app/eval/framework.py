@@ -1,27 +1,19 @@
 from __future__ import annotations
 
 import csv
+import time
 from dataclasses import dataclass
 from pathlib import Path
 from statistics import mean
 
+from app.data.retrieval import retrieve_chunks
+
 
 @dataclass(frozen=True)
-class GoldCase:
-    question_id: str
+class GoldQuestion:
     question: str
-    gold_answer: str
-    gold_chunk_ids: tuple[str, ...]
-
-
-@dataclass(frozen=True)
-class Prediction:
-    question_id: str
-    generated_answer: str
-    retrieved_chunk_ids: tuple[str, ...]
-    refused: bool
-    hallucinated: bool
-    response_time_ms: float
+    expected_keywords: tuple[str, ...]
+    expected_section: str
 
 
 @dataclass(frozen=True)
@@ -29,96 +21,124 @@ class EvaluationMetrics:
     total_questions: int
     retrieval_accuracy_topk: float
     retrieval_accuracy_top1: float
-    hallucination_rate: float
     refusal_rate: float
     avg_response_time_ms: float
     p95_response_time_ms: float
 
 
-def load_gold_cases(csv_path: str | Path) -> dict[str, GoldCase]:
+def load_gold_questions(csv_path: str | Path) -> list[GoldQuestion]:
     path = Path(csv_path)
-    rows: dict[str, GoldCase] = {}
+    questions: list[GoldQuestion] = []
+
     with path.open("r", newline="", encoding="utf-8") as file:
         reader = csv.DictReader(file)
         for row in reader:
-            question_id = row["question_id"].strip()
-            chunk_ids = tuple(
-                chunk.strip() for chunk in row["gold_chunk_ids"].split(";") if chunk.strip()
+            keywords = tuple(
+                keyword.strip().lower()
+                for keyword in row["expected_keywords"].split(",")
+                if keyword.strip()
             )
-            rows[question_id] = GoldCase(
-                question_id=question_id,
-                question=row["question"].strip(),
-                gold_answer=row["gold_answer"].strip(),
-                gold_chunk_ids=chunk_ids,
+            questions.append(
+                GoldQuestion(
+                    question=row["question"].strip(),
+                    expected_keywords=keywords,
+                    expected_section=row["expected_section"].strip().lower(),
+                )
             )
-    return rows
+
+    return questions
 
 
-def load_predictions(csv_path: str | Path) -> dict[str, Prediction]:
-    path = Path(csv_path)
-    rows: dict[str, Prediction] = {}
-    with path.open("r", newline="", encoding="utf-8") as file:
-        reader = csv.DictReader(file)
-        for row in reader:
-            question_id = row["question_id"].strip()
-            chunk_ids = tuple(
-                chunk.strip() for chunk in row["retrieved_chunk_ids"].split(";") if chunk.strip()
-            )
-            rows[question_id] = Prediction(
-                question_id=question_id,
-                generated_answer=row["generated_answer"].strip(),
-                retrieved_chunk_ids=chunk_ids,
-                refused=row["refused"].strip().lower() == "true",
-                hallucinated=row["hallucinated"].strip().lower() == "true",
-                response_time_ms=float(row["response_time_ms"]),
-            )
-    return rows
+def evaluate_retrieval(
+    gold_questions: list[GoldQuestion],
+    index: object,
+    metadata: dict[str, object],
+    *,
+    embedding_model: str,
+    embedding_client: object,
+    top_k: int,
+    min_similarity: float,
+) -> EvaluationMetrics:
+    if not gold_questions:
+        raise ValueError("gold_questions must not be empty.")
 
-
-def evaluate(gold_cases: dict[str, GoldCase], predictions: dict[str, Prediction]) -> EvaluationMetrics:
-    missing_predictions = sorted(set(gold_cases) - set(predictions))
-    if missing_predictions:
-        raise ValueError(
-            "Missing predictions for question IDs: " + ", ".join(missing_predictions)
-        )
-
-    total = len(gold_cases)
     topk_hits = 0
     top1_hits = 0
     refusal_count = 0
-    hallucination_count = 0
-    response_times: list[float] = []
+    response_times_ms: list[float] = []
 
-    for question_id, gold_case in gold_cases.items():
-        prediction = predictions[question_id]
+    for case in gold_questions:
+        started_at = time.perf_counter()
+        retrieval_result = retrieve_chunks(
+            query=case.question,
+            index=index,
+            metadata=metadata,
+            embedding_model=embedding_model,
+            embedding_client=embedding_client,
+            top_k=top_k,
+            min_similarity=min_similarity,
+        )
+        elapsed_ms = (time.perf_counter() - started_at) * 1000
+        response_times_ms.append(elapsed_ms)
 
-        response_times.append(prediction.response_time_ms)
-        if prediction.refused:
+        refused = bool(retrieval_result["rejected"])
+        if refused:
             refusal_count += 1
-        if prediction.hallucinated:
-            hallucination_count += 1
+            continue
 
-        gold_chunks = set(gold_case.gold_chunk_ids)
-        retrieved_chunks = prediction.retrieved_chunk_ids
-
-        if any(chunk_id in gold_chunks for chunk_id in retrieved_chunks):
+        retrieved = retrieval_result.get("retrieved", [])
+        matched = [item for item in retrieved if _chunk_matches(case, item)]
+        if matched:
             topk_hits += 1
 
-        if retrieved_chunks and retrieved_chunks[0] in gold_chunks:
+        if retrieved and _chunk_matches(case, retrieved[0]):
             top1_hits += 1
 
-    sorted_times = sorted(response_times)
+    sorted_times = sorted(response_times_ms)
     p95_index = max(int(0.95 * len(sorted_times)) - 1, 0)
 
+    total = len(gold_questions)
     return EvaluationMetrics(
         total_questions=total,
         retrieval_accuracy_topk=topk_hits / total,
         retrieval_accuracy_top1=top1_hits / total,
-        hallucination_rate=hallucination_count / total,
         refusal_rate=refusal_count / total,
-        avg_response_time_ms=mean(response_times),
+        avg_response_time_ms=mean(response_times_ms),
         p95_response_time_ms=sorted_times[p95_index],
     )
+
+
+def _chunk_matches(case: GoldQuestion, retrieved_item: dict[str, object]) -> bool:
+    text = str(retrieved_item.get("text", "")).lower()
+    metadata = retrieved_item.get("metadata", {})
+    if not isinstance(metadata, dict):
+        metadata = {}
+
+    section = str(metadata.get("section", "")).lower()
+    source = str(metadata.get("source", "")).lower()
+
+    haystack = " ".join([text, section, source])
+
+    section_hit = _section_matches(case.expected_section, haystack)
+    keyword_hit = any(keyword in haystack for keyword in case.expected_keywords)
+    return section_hit and keyword_hit
+
+
+def _section_matches(expected_section: str, haystack: str) -> bool:
+    section_aliases = {
+        "definition": ["تعريف", "cmpa", "lactose"],
+        "ingredients": ["casein", "whey", "مكونات", "ملصق"],
+        "alternatives": ["بدائل", "حليب", "تركيبة", "soy", "oat"],
+        "diagnosis": ["تشخيص", "ige", "اختبارات", "التاريخ"],
+        "management": ["إدارة", "تجنب", "نمو", "متابعة"],
+        "red_flags": ["علامات حمراء", "تأق", "إسعاف", "anaphylaxis"],
+        "symptom_checker": ["rule", "تصنيف", "خفيف", "متوسط", "شديد"],
+        "food_diary": ["يومية", "food diary", "التاريخ", "الوجبة"],
+        "recipes": ["الوصفة", "مكونات", "التحضير", "ملاءمة العمر"],
+        "medical_recommendations": ["wao", "aaaai", "تحدي غذائي", "إحالة"],
+    }
+    aliases = section_aliases.get(expected_section, [expected_section])
+    return any(alias.lower() in haystack for alias in aliases)
 
 
 def write_metrics_csv(metrics: EvaluationMetrics, output_csv_path: str | Path) -> None:
@@ -131,7 +151,6 @@ def write_metrics_csv(metrics: EvaluationMetrics, output_csv_path: str | Path) -
         writer.writerow(["total_questions", metrics.total_questions])
         writer.writerow(["retrieval_accuracy_topk", f"{metrics.retrieval_accuracy_topk:.4f}"])
         writer.writerow(["retrieval_accuracy_top1", f"{metrics.retrieval_accuracy_top1:.4f}"])
-        writer.writerow(["hallucination_rate", f"{metrics.hallucination_rate:.4f}"])
         writer.writerow(["refusal_rate", f"{metrics.refusal_rate:.4f}"])
         writer.writerow(["avg_response_time_ms", f"{metrics.avg_response_time_ms:.2f}"])
         writer.writerow(["p95_response_time_ms", f"{metrics.p95_response_time_ms:.2f}"])

@@ -1,53 +1,42 @@
-# Evaluation Framework for Medical RAG Responses
+# Evaluation Framework for CMPA Retrieval Quality
 
-This framework evaluates 50 manually labeled test questions and reports metrics in CSV format.
+This framework evaluates the CMPA gold set and reports retrieval metrics using a real FAISS index built from the project CMPA sources.
 
 ## Assets
 
-- Gold set: `eval/gold_questions.csv`
-  - Contains 50 test questions.
-  - Contains manually written gold answers.
-  - Contains expected gold chunk IDs for retrieval checks.
-- Predictions template: `eval/predictions_template.csv`
-  - Copy to `eval/predictions.csv` and populate with model outputs.
+- Gold set: `eval/gold_questions_cmpa.csv`
+  - Contains realistic Arabic and English CMPA user questions.
+  - Contains expected retrieval keywords per question.
+  - Contains expected section labels (for semantic matching).
 - Evaluator script: `scripts/run_eval.py`
 - Metrics implementation: `app/eval/framework.py`
 
 ## Metrics computed
 
 1. `retrieval_accuracy_topk`
-   - Fraction of questions where **any** retrieved chunk ID matches the gold chunk IDs.
+   - Fraction of questions where any of the top-k retrieved chunks matches both expected section and expected keywords.
 2. `retrieval_accuracy_top1`
-   - Fraction where the **first** retrieved chunk matches a gold chunk ID.
-3. `hallucination_rate`
-   - Fraction of questions marked as hallucinated in the predictions file.
-4. `refusal_rate`
-   - Fraction of questions where the assistant refused.
-5. `avg_response_time_ms`
-   - Mean response latency in milliseconds.
-6. `p95_response_time_ms`
-   - 95th percentile response latency in milliseconds.
+   - Fraction where the first retrieved chunk matches expected section and expected keywords.
+3. `refusal_rate`
+   - Fraction of questions where retrieval confidence is below `min_similarity` and the system rejects answering.
+4. `avg_response_time_ms`
+   - Mean measured retrieval latency in milliseconds.
+5. `p95_response_time_ms`
+   - Measured 95th percentile retrieval latency in milliseconds.
 
 ## How to run
 
-1. Create prediction file:
-
 ```bash
-cp eval/predictions_template.csv eval/predictions.csv
+python scripts/run_eval.py --gold eval/gold_questions_cmpa.csv --output eval/metrics.csv --index-dir eval/faiss --top-k 5 --min-similarity 0.15
 ```
 
-2. Fill each row with:
+The script:
 
-- `generated_answer`: assistant output text.
-- `retrieved_chunk_ids`: semicolon-separated IDs in retrieval order.
-- `refused`: `true` or `false`.
-- `hallucinated`: `true` or `false` (manual or judge-model labeling).
-- `response_time_ms`: numeric latency.
-
-3. Execute:
-
-```bash
-python scripts/run_eval.py --gold eval/gold_questions.csv --predictions eval/predictions.csv --output eval/metrics.csv
-```
-
-4. Read metrics at `eval/metrics.csv`.
+1. Ingests only:
+   - `cmpa_knowledge.txt`
+   - `medical_guidelines_summary.txt`
+   - `symptom_checker_logic.txt`
+   - `recipes_database.txt`
+2. Builds a FAISS index and metadata under `eval/faiss`.
+3. Runs retrieval for every gold question.
+4. Writes aggregate metrics to `eval/metrics.csv`.
