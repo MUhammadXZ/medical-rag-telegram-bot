@@ -1,0 +1,45 @@
+question,expected_keywords,expected_section
+"What is the difference between CMPA and lactose intolerance in infants?","cmpa,lactose intolerance,immune",definition
+"ما الفرق بين حساسية بروتين الحليب وعدم تحمل اللاكتوز عند الرضع؟","cmpa,عدم تحمّل اللاكتوز,مناعي",definition
+"Is lactose-free milk safe for a child with CMPA?","lactose-free,protein,not safe",ingredients
+"هل الحليب الخالي من اللاكتوز آمن لطفل عنده CMPA؟","خالٍ من اللاكتوز,بروتينات الحليب,ليس آمن",ingredients
+"Which hidden milk ingredients should I check on labels?","casein,whey,milk solids",ingredients
+"ما أهم المكونات المخفية التي تدل على وجود بروتين الحليب؟","caseinate,whey,milk protein",ingredients
+"Can ghee trigger CMPA symptoms?","ghee,butter,protein traces",ingredients
+"هل عبارة may contain milk تعني المنتج ممنوع لطفلي؟","قد يحتوي على حليب,تلوث تبادلي,شدة الحساسية",ingredients
+"What dairy alternatives are acceptable after age one?","plant-based,calcium,vitamin d",alternatives
+"ما أفضل بدائل الحليب بعد عمر سنة لطفل CMPA؟","بدائل الحليب,الكالسيوم,فيتامين d",alternatives
+"Can I use almond milk as a main milk for my 8-month-old baby?","almond milk,not for infants,age",alternatives
+"هل يمكن استخدام مشروبات نباتية عادية بدل تركيبة الرضيع؟","مشروبات نباتية,تركيبة الرضيع,إشراف طبي",alternatives
+"How do doctors classify IgE and non-IgE CMPA?","ige,non-ige,mixed",diagnosis
+"ما دور التاريخ المرضي في تشخيص حساسية بروتين الحليب؟","التاريخ المرضي,العلاقة الزمنية,شدة التفاعل",diagnosis
+"Are skin prick and specific IgE tests enough alone to confirm CMPA?","skin prick,specific ige,not enough",diagnosis
+"متى نحتاج حمية استبعاد تشخيصية في CMPA؟","حمية استبعاد,مدة محددة,إعادة تقييم",diagnosis
+"What is the role of oral food challenge in CMPA diagnosis?","تحدي غذائي,تأكيد التشخيص,تقدير المخاطر",medical_recommendations
+"What conditions can mimic CMPA symptoms?","lactose intolerance,reflux,other food allergy",diagnosis
+"متى يكون الطفل بحاجة لإحالة أسرع لاختصاصي؟","تاريخ تأق,فشل نمو,دم بالبراز",medical_recommendations
+"What are the key daily management principles for CMPA at home?","avoid milk proteins,label reading,cross contamination",management
+"كيف أضمن نمو الطفل عند استبعاد الألبان؟","نمو الطفل,البروتين,الكالسيوم",management
+"Why is over-restricting foods without evidence discouraged?","unnecessary restriction,nutritional deficiency,balanced plan",management
+"What should schools know about a child with CMPA?","written plan,forbidden foods,emergency steps",management
+"ما العلامات الحمراء التي تشير لاحتمال التأق؟","علامات حمراء,تأق,إسعاف",red_flags
+"Does severe breathing difficulty after milk exposure require emergency care?","difficulty breathing,emergency,anaphylaxis",red_flags
+"هل غياب الطفح ينفي وجود تأق؟","غياب الطفح,لا ينفي,تأق",red_flags
+"My child has lip swelling and repeated vomiting after a snack, what level is this?","تورم الشفاه,قيء متكرر,متوسط",symptom_checker
+"طفلي لديه شرى واسع مع سعال بعد الأكل، هل هذا متوسط أم شديد؟","شرى واسع,سعال,تصنيف",symptom_checker
+"How does the symptom checker handle conflicting input like no dyspnea but cyanosis?","conflicting information,cyanosis,safety first",symptom_checker
+"متى يصنف الروبوت الحالة كطارئ شديد مباشرة؟","أي علامة حمراء,طارئ شديد,رسالة إسعاف",symptom_checker
+"What are the minimum inputs needed for CMPA symptom triage?","age,time after exposure,affected systems",symptom_checker
+"ما الذي يجب مراقبته خلال الساعات القادمة بعد أعراض خفيفة؟","مراقبة,ساعات قادمة,تكرار الأعراض",symptom_checker
+"How do I fill a CMPA food diary correctly?","food diary,time,product name",food_diary
+"ما الحقول الأساسية في اليومية الغذائية لطفل CMPA؟","التاريخ,وقت الوجبة,المكونات",food_diary
+"Should I document symptom severity as 0 to 3 in the diary?","severity 0-3,خفيف,شديد",food_diary
+"What should be recorded about actions taken during a reaction?","stopped food,medication,called emergency",food_diary
+"Give me a dairy-free recipe for an 8-month-old with soft texture.","شوربة الشوفان,من 8 أشهر,قوام ناعم",recipes
+"هل وصفة مهروس البطاطس بزيت الزيتون مناسبة لعمر 7-8 أشهر؟","مهروس البطاطس,زيت الزيتون,7-8 أشهر",recipes
+"What protein-rich dairy-free lunch can I prepare for a toddler?","أرز بالدجاج,protein,from 10 months",recipes
+"ما وصفة خفيفة خالية من الألبان لطفل أكبر من سنتين؟","بودينغ الشيا,أكبر من سنتين,قوام",recipes
+"Is hummus with light tahini allowed, and what caution is mentioned?","حمص مهروس,طحينة,حساسية السمسم",recipes
+"Can I make rice pudding without dairy for a one-year-old?","رز بحليب الأرز,12 شهرًا,غير محلى",recipes
+"What recipe in the database is suggested for family meal prep with vegetables and chicken?","صينية خضار ودجاج,وجبة عائلية,12 شهرًا",recipes
+"ما نصيحة السلامة العامة قبل تطبيق أي وصفة جاهزة أو منتج تجاري؟","قراءة الملصقات,مشتقات الحليب,التأكد",recipes
