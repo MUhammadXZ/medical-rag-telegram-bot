@@ -1,4 +1,4 @@
-question_id,generated_answer,retrieved_chunk_ids,refused,hallucinated,response_time_ms
+question_id,response_answer,retrieved_chunk_ids,refused,hallucinated,response_time_ms
 Q001,,C001,false,false,0
 Q002,,C002,false,false,0
 Q003,,C003,false,false,0

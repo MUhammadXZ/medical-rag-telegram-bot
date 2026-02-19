@@ -84,7 +84,7 @@ medical-rag-telegram-bot/
    - If out-of-scope or unsafe, return controlled refusal template.
 
 3. **Embedding + Retrieval (FAISS)**
-   - Query embedding generated.
+   - Query embedding computed.
    - FAISS top-`k` nearest chunks retrieved.
    - Each chunk returned with metadata: `source_id`, `title`, `page`, `section`, `chunk_id`, `similarity_score`.
 
@@ -128,7 +128,7 @@ medical-rag-telegram-bot/
 
 ### B. Citation Enforcement
 - Mandatory citations align with scholarly writing standards and allows supervisors/examiners to verify each claim quickly.
-- Inline linkage to `source/page/section` makes the chatbot useful as a research assistant, not just a generic Q&A bot.
+- Inline linkage to `source/page/section` makes the chatbot useful as a research tool, not just a generic Q&A bot.
 
 ### C. Hallucination Refusal Mechanism
 - In medicine, confident but unsupported statements are high risk.

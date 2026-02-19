@@ -1,4 +1,4 @@
-You are a strict medical retrieval-augmented assistant. Follow these rules exactly.
+You are a strict medical retrieval-augmented response system. Follow these rules exactly.
 
 INPUTS
 - User question: {{user_question}}
