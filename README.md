@@ -1,18 +1,33 @@
-# Medical RAG Telegram Bot
+# CMPA Medical RAG Telegram Bot
 
-## Run the Telegram bot locally (polling mode)
+A Telegram bot that provides retrieval-augmented guidance for **Cow's Milk Protein Allergy (CMPA)** using a FAISS knowledge index.
 
-1. Install dependencies (including the new Telegram adapter dependency):
-   - `pip install python-telegram-bot`
-2. Ensure your retrieval artifacts already exist:
-   - `artifacts/guidelines.index`
-   - `artifacts/guidelines_metadata.json`
-3. Copy environment template and set your bot token:
-   - `cp .env.example .env`
-   - Set `TELEGRAM_BOT_TOKEN` in `.env`
-4. Export environment variables:
-   - `set -a && source .env && set +a`
-5. Run the bot:
-   - `python -m app.interfaces.telegram_bot`
+> **Medical notice:** This project is for educational support only and is not a diagnostic system.
 
-The bot runs using Telegram long polling (no webhook setup required).
+## Quick Start
+
+```bash
+cd medical-rag-telegram-bot
+python -m pip install -r requirements.txt
+cp .env.example .env
+python -m app.interfaces.telegram_bot
+```
+
+## Configuration
+
+- `TELEGRAM_BOT_TOKEN` is prefilled in `.env.example`.
+- FAISS artifacts expected by default:
+  - `eval/faiss/guidelines.index`
+  - `eval/faiss/guidelines_metadata.json`
+
+## Optional Launch Helpers
+
+- Linux/macOS: `./run_bot.sh`
+- Windows: `run_bot.bat`
+- Guided setup: `python setup_and_run.py`
+
+## Troubleshooting
+
+- **Bot does not start:** reinstall dependencies with `python -m pip install -r requirements.txt`.
+- **Index load errors:** verify FAISS files above exist or update paths in `.env`.
+- **Telegram errors:** validate token and bot status in BotFather.
